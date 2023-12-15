@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RequestConversionDTO {
 
-    @NotBlank
+    @NotBlank(message = "You must specify a currency. Ex: EUR")
     @Pattern(regexp = "^[a-zA-Z]{3}$", message = "The field must contain exactly 3 alphabetic characters.")
     private String from;
 
-    @NotBlank
+    @NotBlank(message = "You must specify a currency. Ex: EUR")
     @Pattern(regexp = "^[a-zA-Z]{3}$", message = "The field must contain exactly 3 alphabetic characters.")
     private String to;
 

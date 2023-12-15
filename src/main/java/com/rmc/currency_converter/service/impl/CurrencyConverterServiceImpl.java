@@ -23,6 +23,7 @@ public class CurrencyConverterServiceImpl implements CurrencyConverterService {
 
     @Override
     public ConversionResultDTO convert(String from, String to, Double amount) {
+        log.info("Converting currency: From {}, To {}, Amount {}.", from, to, amount);
 
         CurrencyConversionResponse result = this.exchangeRatesClient.getAmountConverted(from, to, amount);
 
@@ -31,17 +32,21 @@ public class CurrencyConverterServiceImpl implements CurrencyConverterService {
             throw new CurrencyConverterException("Error converting currency");
         }
 
+        log.info("Currency converted successfully: From {}, To {}, Amount {}, Result {}, At {}."
+                , from, to, amount, result.getResult(), result.getDate());
+
         return ConversionResultDTO.builder()
                 .from(result.getQuery().getFrom())
                 .amount(result.getQuery().getAmount())
                 .to(result.getQuery().getTo())
                 .result(result.getResult())
                 .build();
-
     }
 
     @Override
     public CurrentCurrencyDTO getCurrentCurrency(String base, List<String> symbols) {
+        log.info("Getting current currency: From {}, Symbols {}.", base, symbols);
+
         ExchangeRatesResponse result = this.exchangeRatesClient.getExchangeRates(base, String.join(",", symbols));
 
         if (!result.isSuccess()) {
@@ -49,11 +54,12 @@ public class CurrencyConverterServiceImpl implements CurrencyConverterService {
             throw new CurrencyConverterException("Error getting current currency");
         }
 
+        log.info("Current currency retrieved successfully: From {}, Rates {}, At {}."
+                , base, result.getRates(), result.getDate());
+
         return CurrentCurrencyDTO.builder()
                 .base(result.getBase())
                 .rates(result.getRates())
                 .build();
-
     }
-
 }

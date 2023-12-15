@@ -20,7 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -42,14 +45,22 @@ public class CurrencyConverterController {
     ) {
         log.info("Request to convert: {}", requestConversionDTO);
 
-        ResponseEntity<Object> errorResponse = validateConversion(requestConversionDTO, bindingResult);
-        if (errorResponse != null) return errorResponse;
+        ResponseEntity<Object> errorResponse = validateRequestBindingConstraints(bindingResult);
+
+        if (errorResponse != null) {
+            log.error("Validation error during conversion: {}", errorResponse);
+            return errorResponse;
+        }
+
+        validateCurrency(requestConversionDTO.getFrom(), requestConversionDTO.getTo());
 
         ConversionResultDTO result =
                 this.currencyConverter.convert(
                         requestConversionDTO.getFrom(),
                         requestConversionDTO.getTo(),
                         requestConversionDTO.getAmount());
+
+        log.info("Conversion result: {}", result);
 
         return ResponseEntity.ok(result);
     }
@@ -62,20 +73,34 @@ public class CurrencyConverterController {
             RequestRatesDTO requestRatesDTO,
             BindingResult bindingResult
     ) {
+        log.info("Request to get current rates: {}", requestRatesDTO);
 
-        ResponseEntity<Object> errorResponse = validateRequest(bindingResult);
-        if (errorResponse != null) return errorResponse;
+        ResponseEntity<Object> errorResponse = validateRequestBindingConstraints(bindingResult);
+
+        if (errorResponse != null) {
+            log.error("Validation error during request rates: {}", errorResponse);
+            return errorResponse;
+        }
+
+        List<String> currenciesToValidate = new ArrayList<>();
+        currenciesToValidate.add(requestRatesDTO.getBase());
+        currenciesToValidate.addAll(requestRatesDTO.getSymbols());
+
+        validateCurrency(currenciesToValidate.toArray(new String[0]));
 
         CurrentCurrencyDTO result =
                 this.currencyConverter.getCurrentCurrency(
                         requestRatesDTO.getBase(),
                         requestRatesDTO.getSymbols());
 
+        log.info("Current rates result: {}", result);
+
         return ResponseEntity.ok(result);
 
     }
 
-    private ResponseEntity<Object> validateRequest(BindingResult bindingResult) {
+
+    private ResponseEntity<Object> validateRequestBindingConstraints(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
 
@@ -94,12 +119,9 @@ public class CurrencyConverterController {
         return null;
     }
 
-    private ResponseEntity<Object> validateConversion(RequestConversionDTO requestConversionDTO, BindingResult bindingResult) {
-        ResponseEntity<Object> errorResponse = validateRequest(bindingResult);
-        if (errorResponse != null) return errorResponse;
-
-        CurrencyConverterUtil.validateCurrency(currencyConverterProperties.getCurrencies(), requestConversionDTO.getFrom());
-        CurrencyConverterUtil.validateCurrency(currencyConverterProperties.getCurrencies(), requestConversionDTO.getTo());
-        return null;
+    private void validateCurrency(String... currencies) {
+        Arrays.stream(currencies).forEach(
+                currency -> CurrencyConverterUtil.validateCurrency(currencyConverterProperties.getCurrencies(), currency)
+        );
     }
 }
