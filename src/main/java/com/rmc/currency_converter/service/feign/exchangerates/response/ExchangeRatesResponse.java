@@ -1,4 +1,4 @@
-package com.rmc.currency_converter.service.feign.exchangerates.dto;
+package com.rmc.currency_converter.service.feign.exchangerates.response;
 
 import lombok.Data;
 
