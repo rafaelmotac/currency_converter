@@ -1,7 +1,7 @@
 package com.rmc.currency_converter.service.feign.exchangerates;
 
-import com.rmc.currency_converter.service.feign.exchangerates.dto.CurrencyConversionResponse;
-import com.rmc.currency_converter.service.feign.exchangerates.dto.ExchangeRatesResponse;
+import com.rmc.currency_converter.service.feign.exchangerates.response.CurrencyConversionResponse;
+import com.rmc.currency_converter.service.feign.exchangerates.response.ExchangeRatesResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
