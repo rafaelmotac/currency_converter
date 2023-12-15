@@ -1,0 +1,5 @@
+---
+currency-converter:
+  exchange-rates-api:
+    url: "http://localhost:${wiremock.server.port}"
+    access-key: "MY_KEY"

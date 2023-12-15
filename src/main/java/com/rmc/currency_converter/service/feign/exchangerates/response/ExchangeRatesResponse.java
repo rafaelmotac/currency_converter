@@ -1,13 +1,14 @@
 package com.rmc.currency_converter.service.feign.exchangerates.response;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
 public class ExchangeRatesResponse {
     private boolean success;
-    private long timestamp;
     private String base;
     private String date;
     private Map<String, Double> rates;

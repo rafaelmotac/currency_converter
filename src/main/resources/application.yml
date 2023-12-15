@@ -178,3 +178,8 @@ currency-converter:
     - YER
     - ZMW
     - ZWL
+---
+logging:
+  level:
+    com:
+      rmc: INFO
