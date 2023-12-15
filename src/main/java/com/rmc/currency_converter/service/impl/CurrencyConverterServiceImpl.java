@@ -3,7 +3,7 @@ package com.rmc.currency_converter.service.impl;
 import com.rmc.currency_converter.dto.ConversionResultDTO;
 import com.rmc.currency_converter.dto.CurrentCurrencyDTO;
 import com.rmc.currency_converter.exception.CurrencyConverterException;
-import com.rmc.currency_converter.service.CurrencyConverter;
+import com.rmc.currency_converter.service.CurrencyConverterService;
 import com.rmc.currency_converter.service.feign.exchangerates.ExchangeRatesClient;
 import com.rmc.currency_converter.service.feign.exchangerates.response.CurrencyConversionResponse;
 import com.rmc.currency_converter.service.feign.exchangerates.response.ExchangeRatesResponse;
@@ -17,15 +17,16 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class CurrencyConverterImpl implements CurrencyConverter {
+public class CurrencyConverterServiceImpl implements CurrencyConverterService {
 
     private final ExchangeRatesClient exchangeRatesClient;
 
     @Override
     public ConversionResultDTO convert(String from, String to, Double amount) {
+
         CurrencyConversionResponse result = this.exchangeRatesClient.getAmountConverted(from, to, amount);
 
-        if (!result.getSuccess()) {
+        if (!result.isSuccess()) {
             log.error("Error converting currency: From {}, To {}, Amount {}.", from, to, amount);
             throw new CurrencyConverterException("Error converting currency");
         }
@@ -54,4 +55,5 @@ public class CurrencyConverterImpl implements CurrencyConverter {
                 .build();
 
     }
+
 }
