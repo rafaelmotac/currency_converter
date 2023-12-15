@@ -8,6 +8,12 @@ import com.rmc.currency_converter.dto.RequestConversionDTO;
 import com.rmc.currency_converter.dto.RequestRatesDTO;
 import com.rmc.currency_converter.service.CurrencyConverterService;
 import com.rmc.currency_converter.util.CurrencyConverterUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +34,7 @@ import java.util.Map;
 
 @RestController
 @Slf4j
+@Tag(name = "Currency Converter", description = "Currency Converter API")
 @RequestMapping(value = "/api/v1/currency-converter")
 @Validated
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -37,9 +44,19 @@ public class CurrencyConverterController {
     private final CurrencyConverterProperties currencyConverterProperties;
 
     @PostMapping(value = "/convert")
+    @Operation(summary = "Convert currency",
+            description = "Converts an amount from one currency to another",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful operation",
+                            content = @Content(schema = @Schema(implementation = ConversionResultDTO.class))),
+                    @ApiResponse(responseCode = "400", description = "Validation error",
+                            content = @Content(schema = @Schema(implementation = ErrorDTO.class)))
+            })
     public ResponseEntity<Object> convert(
             @Validated
             @RequestBody
+            @Parameter(description = "Request for currency conversion", required = true,
+                    schema = @Schema(implementation = RequestConversionDTO.class))
             RequestConversionDTO requestConversionDTO,
             BindingResult bindingResult
     ) {
@@ -67,9 +84,19 @@ public class CurrencyConverterController {
 
 
     @PostMapping(value = "/current-currency")
+    @Operation(summary = "Get current rates",
+            description = "Get current rates for a given currency",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful operation",
+                            content = @Content(schema = @Schema(implementation = CurrentCurrencyDTO.class))),
+                    @ApiResponse(responseCode = "400", description = "Validation error",
+                            content = @Content(schema = @Schema(implementation = ErrorDTO.class)))
+            })
     public ResponseEntity<Object> requestRates(
             @Validated
             @RequestBody
+            @Parameter(description = "Request for current rates", required = true,
+                    schema = @Schema(implementation = RequestRatesDTO.class))
             RequestRatesDTO requestRatesDTO,
             BindingResult bindingResult
     ) {
