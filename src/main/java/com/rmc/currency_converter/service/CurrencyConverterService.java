@@ -5,7 +5,7 @@ import com.rmc.currency_converter.dto.CurrentCurrencyDTO;
 
 import java.util.List;
 
-public interface CurrencyConverter {
+public interface CurrencyConverterService {
 
     ConversionResultDTO convert(String from, String to, Double amount);
 

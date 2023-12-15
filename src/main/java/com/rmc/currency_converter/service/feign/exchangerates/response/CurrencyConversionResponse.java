@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class CurrencyConversionResponse {
-    private Boolean success;
+    private boolean success;
     private Query query;
     private Info info;
     private String historical;
