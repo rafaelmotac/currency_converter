@@ -1,0 +1,13 @@
+---
+spring:
+  profiles:
+    active: dev
+  application:
+    name: currency-converter-app
+server:
+  port: 8080
+---
+currency-converter:
+  exchange-rates-api:
+    url: "http://api.exchangeratesapi.io/v1/"
+    access-key: "de594bec93e3f89b20c7bb1e81eb684f" # On a production application this should be stored in a secure place
